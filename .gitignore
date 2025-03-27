@@ -16,6 +16,8 @@ coverage
 .env
 .DS_Store
 Thumbs.db
+*.pem
+
 
 # Editor directories and files
 .vscode/*
