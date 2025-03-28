@@ -12,8 +12,8 @@ describe('Given an instance of FilmsController', () => {
         update: vi.fn(),
         delete: vi.fn(),
     } as unknown as Repository<Film>;
-    const controller = new FilmsController(repoFilmsMock);
 
+    const controller = new FilmsController(repoFilmsMock);
     const req = {} as Request;
     const res = {
         json: vi.fn(),
@@ -53,9 +53,10 @@ describe('Given an instance of FilmsController', () => {
 
     describe('When post is called', () => {
         test('then it should call repoFilms.create and return the created film', async () => {
-            const newFilm = [{ id: '1', title: 'New Film' }];
+            const newFilm = { id: '1', title: 'new data' };
             req.body = newFilm;
-            repoFilmsMock.create = vi.fn().mockResolvedValue(newFilm);
+            repoFilmsMock.create = vi.fn().mockReturnValue(newFilm);
+
             await controller.post(req, res, next);
 
             expect(repoFilmsMock.create).toHaveBeenCalledWith(newFilm);

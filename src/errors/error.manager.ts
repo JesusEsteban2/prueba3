@@ -3,8 +3,6 @@ import type { NextFunction, Request, Response } from 'express';
 //import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js';
 
 export class ErrorManager {
-    constructor() {}
-
     notFoundController(req: Request, _res: Response, next: NextFunction) {
         console.log('Petición recibida');
         const message = `Page ${req.url} not found`;

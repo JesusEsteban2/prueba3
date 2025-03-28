@@ -5,7 +5,7 @@ import { Film } from '@prisma/client';
 export class FilmPrismaRepo implements Repository<Film> {
     prisma: PrismaClient;
     constructor() {
-        console.log('Instancite repo for films');
+        console.log('Instance repo for films');
         this.prisma = new PrismaClient();
     }
 
