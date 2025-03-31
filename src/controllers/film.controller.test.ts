@@ -14,6 +14,7 @@ describe('Given an instance of FilmsController', () => {
     } as unknown as Repository<Film>;
 
     const controller = new FilmsController(repoFilmsMock);
+    const error = new Error('Error');
     const req = {} as Request;
     const res = {
         json: vi.fn(),
@@ -21,6 +22,18 @@ describe('Given an instance of FilmsController', () => {
     const next = vi.fn() as NextFunction;
 
     describe('When getAll is called', () => {
+        test('then it should be instaciated', () => {
+            expect(controller).toBeInstanceOf(FilmsController);
+        });
+    });
+
+    describe('When getAll is called', () => {
+        test('then it should call with bad argument', async () => {
+            repoFilmsMock.getAll = vi.fn().mockRejectedValueOnce(error);
+            await controller.getAll(req, res, next);
+            expect(next).toHaveBeenCalledWith(error);
+        });
+
         test('then it should call repoFilms.getAll and return data', async () => {
             const mockFilms = [{ id: '1', title: 'Film 1' }];
             repoFilmsMock.getAll = vi.fn().mockResolvedValue(mockFilms);
@@ -36,6 +49,10 @@ describe('Given an instance of FilmsController', () => {
     });
 
     describe('When getById is called', () => {
+        test('then it should call with bad argument', async () => {
+            await controller.getById(req, res, next);
+            expect(repoFilmsMock.getById).not.toHaveBeenCalled();
+        });
         test('then it should call repoFilms.getById and return data', async () => {
             const mockFilm = { id: '1', title: 'Film 1' };
             req.params = { id: '1' };
@@ -51,23 +68,12 @@ describe('Given an instance of FilmsController', () => {
         });
     });
 
-    describe('When post is called', () => {
-        test('then it should call repoFilms.create and return the created film', async () => {
-            const newFilm = { id: '1', title: 'new data' };
-            req.body = newFilm;
-            repoFilmsMock.create = vi.fn().mockReturnValue(newFilm);
-
-            await controller.post(req, res, next);
-
-            expect(repoFilmsMock.create).toHaveBeenCalledWith(newFilm);
-            expect(res.json).toHaveBeenCalledWith({
-                data: [newFilm],
-                error: '',
-            });
-        });
-    });
-
     describe('When patch is called', () => {
+        test('then it should call with bad argument', async () => {
+            await controller.patch(req, res, next);
+            expect(repoFilmsMock.update).not.toHaveBeenCalled();
+        });
+
         test('then it should call repoFilms.update and return the updated film', async () => {
             const updatedFilm = { title: 'Updated Film' };
             req.params = { id: '1' };
@@ -84,7 +90,43 @@ describe('Given an instance of FilmsController', () => {
         });
     });
 
+    describe('When post is called', () => {
+        test('then it should call with bad argument', async () => {
+            await controller.post(req, res, next);
+            expect(repoFilmsMock.create).not.toHaveBeenCalled();
+        });
+
+        test('then it should call repoFilms.create and return the created film', async () => {
+            const newFilm = {
+                id: '1',
+                title: 'new data',
+                description: 'new description',
+                releaseYear: 2023,
+                director: 'new director',
+                rating: 5,
+                duration: 120,
+                poster: 'http://example.com/poster.jpg',
+            };
+            req.body = newFilm;
+            repoFilmsMock.create = vi.fn().mockReturnValue(newFilm);
+
+            await controller.post(req, res, next);
+
+            expect(repoFilmsMock.create).toHaveBeenCalledWith(newFilm);
+            expect(res.json).toHaveBeenCalledWith({
+                data: [newFilm],
+                error: '',
+            });
+        });
+    });
+
     describe('When delete is called', () => {
+        test('then it should call with bad argument', async () => {
+            req.params = {};
+            await controller.delete(req, res, next);
+            expect(next).toHaveBeenCalledWith(error);
+        });
+
         test('then it should call repoFilms.delete and return the deleted film', async () => {
             const deletedFilm = { id: '1', title: 'Deleted Film' };
             req.params = { id: '1' };

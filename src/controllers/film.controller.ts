@@ -21,7 +21,6 @@ export class FilmsController {
     }
 
     async getById(req: Request, res: Response, next: NextFunction) {
-        console.log('getById');
         try {
             const { id } = req.params;
             const films = await this.repoFilms.getById(id);
